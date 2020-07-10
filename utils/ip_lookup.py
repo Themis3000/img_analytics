@@ -7,6 +7,7 @@ api_url = "https://freegeoip.app/json/"
 
 def cache_maintainer(clear_time: int):
     """
+    A function decorator that clears lru_cache clear_time seconds
     :param clear_time: In seconds, how often to clear cache (only checks when called)
     """
     def inner(func):
@@ -18,7 +19,7 @@ def cache_maintainer(clear_time: int):
             else:
                 func.next_clear = time.time() + clear_time
 
-            func(*args, **kwargs)
+            return func(*args, **kwargs)
         return wrapper
     return inner
 
@@ -26,6 +27,5 @@ def cache_maintainer(clear_time: int):
 @cache_maintainer(86400)  # clear cache every 1 day
 @lru_cache(maxsize=1000)
 def get_ip_data(ip):
-    print(ip)
-    return requests.get(api_url + ip).json()
-
+    response = requests.get(api_url + ip)
+    return response.json()
