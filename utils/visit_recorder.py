@@ -1,13 +1,20 @@
 from threading import Thread
+from typing import Union
 from utils.ip_lookup import get_ip_data
-from dataclasses import make_dataclass, field
+from dataclasses import make_dataclass, field, dataclass
 import time
 
-Visit = make_dataclass('Visit',
-                       [('ip', str),
-                        ('time_requested', int),
-                        ('tracker_id', str),
-                        ('referer', str, field(default="unknown"))])
+
+@dataclass()
+class Visit:
+    ip: str
+    time_requested: int
+    tracker_id: str
+    referer: Union[str, None] = "(unknown)"
+
+    def __post_init__(self):
+        if type(self.referer) is None:
+            self.referer = "(unknown)"
 
 
 class VisitRecorder(Thread):
@@ -34,5 +41,5 @@ class VisitRecorder(Thread):
                 self.queue = []
             time.sleep(1)
 
-    def add_visit(self, ip, tracker_id, referer):
+    def add_visit(self, ip, tracker_id, referer=None):
         self.queue.append(Visit(ip, int(time.time()), tracker_id, referer))

@@ -2,3 +2,5 @@ requests
 Flask
 pymongo
 cachetools
+shortuuid
+retrying
