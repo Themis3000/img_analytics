@@ -3,6 +3,17 @@ import os
 
 client = MongoClient(os.environ['MONGO_URI'])
 db = client["img_tracker"]
-app_col = db["app"]
+pages_col = db["pages"]
+page_groups_col = db["page_groups"]
 
-def get_stored
+
+def create_page_tracker():
+    pass
+
+
+def add_page_view():
+    pass
+
+
+def create_page_group():
+    pass
