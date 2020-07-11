@@ -1,12 +1,13 @@
 from threading import Thread
 from utils.ip_lookup import get_ip_data
-from dataclasses import make_dataclass
+from dataclasses import make_dataclass, field
 import time
 
 Visit = make_dataclass('Visit',
                        [('ip', str),
                         ('time_requested', int),
-                        ('tracker_id', str)])
+                        ('tracker_id', str),
+                        ('referer', str, field(default="unknown"))])
 
 
 class VisitRecorder(Thread):
@@ -26,11 +27,12 @@ class VisitRecorder(Thread):
                         ip_data = {}
                     ip_data.update({"time_requested": visit.time_requested,
                                     "tracker_id": visit.tracker_id,
-                                    "ip": visit.ip})
+                                    "ip": visit.ip,
+                                    "referer": visit.referer})
                     ip_datas.append(ip_data)
                 print(f"adding {ip_datas}")
                 self.queue = []
             time.sleep(1)
 
-    def add_visit(self, ip, tracker_id):
-        self.queue.append(Visit(ip, int(time.time()), tracker_id))
+    def add_visit(self, ip, tracker_id, referer):
+        self.queue.append(Visit(ip, int(time.time()), tracker_id, referer))

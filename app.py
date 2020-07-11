@@ -8,18 +8,21 @@ small_path = os.path.join(os.getcwd(), 'static', 'small.jpg')
 
 
 @app.route('/')
-def hello_world():
+def index_page():
     return 'Hello World!'
 
 
-@app.route('/<tracker_id>.jpeg')
+@app.route('/img/<tracker_id>.jpeg')
 def img_request(tracker_id):
     response = make_response(send_file(small_path, mimetype="image/jpeg"))
+    # Instructs browsers to not cache image
     response.headers["Cache-Control"] = "max-age=0, no-cache, no-store, must-retaliate"
     # request.environ.get is meant to help in thee situation of a proxy being used, may not always work in all
     # environments. See https://stackoverflow.com/a/26654607/5813879
     request_ip = request.environ.get('HTTP_X_REAL_IP', request.remote_addr)
-    visit_recorder.add_visit("67.220.10.108", tracker_id)
+    referer = request.headers["Referer"]
+    print(request.headers)
+    visit_recorder.add_visit(request_ip, tracker_id, referer)
     return response
 
 
