@@ -18,7 +18,7 @@ function create_popup() {
                 embed_input.value = `${window.location.origin}/img/${tracker_id}.jpeg`;
                 stats_input.value = `${window.location.origin}/img/${tracker_id}`;
                 embed_button.disabled = false;
-                stats_input.disabled = false;
+                stats_button.disabled = false;
         }
     }
     trackerRequest.open("GET", "/api/create_tracker");
@@ -27,7 +27,9 @@ function create_popup() {
 
 function copy_text(input_id) {
     let input = document.getElementById(input_id);
+    input.disabled = false;
     input.select();
     input.setSelectionRange(0, 99999);
     document.execCommand("copy");
+    input.disabled = true;
 }

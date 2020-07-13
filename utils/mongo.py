@@ -16,13 +16,18 @@ trackers_col.create_index("tracker_id", unique=True)
 def create_page_tracker():
     uuid = shortuuid.uuid()[:8]
     trackers_col.insert({"tracker_id": uuid,
-                         "visits_count": 0,
                          "visits": [],
+                         "visit_counts": [],
                          "created_time": int(time.time())})
     return uuid
 
 
-def add_page_view():
+def add_page_view(view_data):
+    trackers_col.update_one({"tracker_id": view_data["tracker_id"]},
+                            {"$push": {"visits": view_data}})
+
+
+def get_views():
     pass
 
 
