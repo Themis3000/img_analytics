@@ -29,7 +29,7 @@ def create_page_tracker():
     uuid = shortuuid.uuid()[:8]
     trackers_col.insert({"tracker_id": uuid,
                          "visits": [],
-                         "visit_counts": {"all": 0},
+                         "visit_counts": {"all": 0, "unique": 0},
                          "created_time": int(time.time())})
     return uuid
 
@@ -45,24 +45,18 @@ def add_page_view(view_data):
     inc_values[f"visit_counts.users.{encoded_ip}"] = 1
     inc_values["visit_counts.all"] = 1
 
+    # todo: make these into a single call instead of 2
+    # if user doses not already exist, don't add 1 to unique, otherwise do
+    trackers_col.update_one({"tracker_id": view_data["tracker_id"]},
+                            [{"$set": {
+                                "visit_counts.unique": {"$cond": [
+                                    {"$not": [f"$visit_counts.users.{encoded_ip}"]},
+                                    {"$add": ["$visit_counts.unique", 1]},
+                                    "$visit_counts.unique"]}
+                            }}])
     trackers_col.update_one({"tracker_id": view_data["tracker_id"]},
                             {"$push": {"visits": view_data},
-                             "$inc": inc_values,
-                             "$set": {
-                                 "visit_counts.unique": {"$cond": [
-                                     {"$not": [f"visit_counts.users.{encoded_ip}"]},
-                                     {"$add": ["$visit_counts.unique", 1]},
-                                     "$visit_counts.unique"]}
-                             }})
-
-    # trackers_col.update_one({"tracker_id": view_data["tracker_id"]},
-    #                         [{"$set":
-    #                             {"$cond": [
-    #                                 {"$not": [f"visit_counts.users.{encoded_ip}"]},
-    #                                 {"$add": ["$visit_counts.unique", 1]},
-    #                                 "$visit_counts.unique"
-    #                             ]}}
-    #                         ])
+                             "$inc": inc_values})
 
 
 def get_views(tracker_id):
