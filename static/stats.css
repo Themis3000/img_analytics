@@ -1,0 +1,64 @@
+.twothird-height-container {
+    position: relative;
+    width: 100%;
+    padding-top: 66.66%;
+}
+
+.twothird-height {
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+}
+
+.green-button {
+    background-color: green;
+    color: white;
+}
+
+body {
+    font-size: 15px;
+    line-height: 1.5;
+}
+
+.popup {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 85%;
+    height: 85%;
+    background-color: #ffffff;
+    border-radius: 5px;
+    border: thin solid #292929;
+}
+
+.popup-center-container {
+    margin: 0;
+    position: absolute;
+    top:50%;
+    width: 100%;
+    -ms-transform: translateY(-50%);
+    transform: translateY(-50%);
+}
+
+.close {
+  cursor: pointer;
+  position: absolute;
+  top: 0;
+  right: 0;
+  padding: 12px 16px;
+  border-radius: 1px;
+}
+
+.close:hover {background: #9a9a9a;}
+
+.blur-all {
+    -webkit-filter: blur(5px);
+    -moz-filter: blur(5px);
+    -o-filter: blur(5px);
+    -ms-filter: blur(5px);
+    filter: blur(5px);
+}

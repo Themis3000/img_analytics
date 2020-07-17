@@ -1,4 +1,5 @@
 from flask import Flask, send_file, request, make_response, render_template, redirect, url_for
+import json
 import os
 from utils.visit_recorder import VisitRecorder
 from utils import mongo
@@ -33,13 +34,19 @@ def stats_redirect(tracker_id):
 
 @app.route('/stats/<tracker_id>')
 def stats_page(tracker_id):
-    return f"{tracker_id} page"
+    return render_template('stats.html')
 
 
 @app.route('/api/create_tracker')
 def create_tracker():
     tracker_id = mongo.create_page_tracker()
     return {"tracker_id": tracker_id}
+
+
+@app.route('/api/tracker/<tracker_id>')
+def get_tracker(tracker_id):
+    data = json.dumps(dict(mongo.get_views(tracker_id, mask_ips=True)))
+    return data
 
 
 if __name__ == '__main__':
