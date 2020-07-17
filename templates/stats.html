@@ -28,7 +28,7 @@
                     <h3 id="views-per-day">-</h3>
                 </div>
                 <div class="w3-clear"></div>
-                <h4>Average views/day</h4>
+                <h4>Average views/24 hours</h4>
             </div>
         </div>
         <div class="w3-third">
@@ -64,34 +64,35 @@
                 <div id="world-map" class="twothird-height"></div>
             </div>
         </div>
-        <div class="w3-twothird" id="recent-visits-container" style="padding-right: 24px">
+        <div class="w3-twothird" id="right-container" style="padding-right: 24px">
             <h5>Recent visits</h5>
-            <table class="w3-table w3-white w3-striped" id="recent-visits">
-                <thead>
-                <tr>
-                    <td style="width: 70%">Location</td>
-                    <td style="width: 20%">Time</td>
-                    <td style="width: 10%"></td>
-                </tr>
-                </thead>
-                <tbody>
-                </tbody>
-            </table>
+            <div id="recent-visits-container">
+                <table class="w3-table w3-white w3-striped" id="recent-visits">
+                    <thead>
+                    <tr>
+                        <td style="width: 70%">Location</td>
+                        <td style="width: 20%">Time</td>
+                        <td style="width: 10%"></td>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 </div>
 <div id="visit-more-info" class="popup">
-    <span class="close">X</span>
-    <div class="popup-center-container w3-row-padding" style="display: flex;flex-direction: row;align-items: center">
-        <div>
-            <iframe id="google-map" width="800" height="600" frameborder="0" style="border:0"></iframe>
-        </div>
-        <div style="width: 100%">
+    <div class="popup-center-container w3-row-padding" style="display: flex;flex-direction: row;align-items: center;height: 100%">
+        <iframe id="google-map" width="60%" height="60%" frameborder="0" style="border:0"></iframe>
+        <div style="width: 40%">
+            <h3 style="text-align: center">Data tags</h3>
             <table id="view-more-info" class="w3-table w3-white w3-striped" style="width: 100%">
                 <tbody></tbody>
             </table>
         </div>
     </div>
+    <span class="close">X</span>
 </div>
 </body>
 </html>

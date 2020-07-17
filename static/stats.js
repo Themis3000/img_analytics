@@ -19,31 +19,22 @@ $(function() {
         $("#unique-views").text(trackingData["visit_counts"]["unique"]);
 
         //populate recent view table
-        let visitsDisplayAmount = 5;
-        for (let visitIndex=Math.max(0, trackingData["visits"].length-visitsDisplayAmount); visitIndex < trackingData["visits"].length; visitIndex++) {
+        for (let [index, visit] of trackingData["visits"].entries()) {
             let visitLocation;
-            if (trackingData["visits"][visitIndex]["city"].length === 0) {
-                if (trackingData["visits"][visitIndex]["country_name"].length === 0){
+            if (visit["city"].length === 0) {
+                if (visit["country_name"].length === 0){
                     visitLocation = "(unknown)"
                 } else {
-                    visitLocation = trackingData["visits"][visitIndex]["country_name"]
+                    visitLocation = visit["country_name"]
                 }
             } else {
-                visitLocation = `${trackingData["visits"][visitIndex]["city"]}, ${trackingData["visits"][visitIndex]["country_name"]}`
+                visitLocation = `${visit["city"]}, ${visit["country_name"]}`
             }
             $("#recent-visits tbody").append(`
                 <tr>
                     <td>${visitLocation}</td>
-                    <td>${timeSince(trackingData["visits"][visitIndex]["time_requested"]*1000)}</td>
-                    <td><div class="w3-btn green-button" onclick="visitMoreInfo(${visitIndex});">More info</div></td>            
-                </tr>
-            `)
-        }
-        if (trackingData["visits"].length > visitsDisplayAmount) {
-            $("#recent-visits tbody").append(`
-                <tr>
-                    <td></td><td></td>
-                    <td><div class="w3-btn green-button" onclick="viewMoreVisits();">View more</div></td>
+                    <td>${timeSince(new Date(visit["time_requested"]*1000))}</td>
+                    <td><div class="w3-btn green-button" onclick="visitMoreInfo(${index});">More info</div></td>            
                 </tr>
             `)
         }
@@ -77,17 +68,18 @@ function visitMoreInfo(visitIndex) {
     $("#google-map").prop('src', googleMapsSrc(trackingData["visits"][visitIndex]["longitude"], trackingData["visits"][visitIndex]["latitude"]));
     $("#view-more-info tbody").empty();
     $.each(trackingData["visits"][visitIndex], function(key, value) {
-        $("#view-more-info tbody").append(`
-            <tr>
-                <td>${key}</td>
-                <td>${value}</td>
-            </tr>
-        `);
-    })
-}
-
-function viewMoreVisits() {
-    console.log(trackingData["visits"]);
+        if (value.length !== 0) {
+            $("#view-more-info tbody").append(`
+                <tr>
+                    <td class="datatag-key">${key}</td>
+                    <td class="datatag-value">${value}</td>
+                </tr>
+            `);
+        }
+    });
+    //converts epoch time in time_requested field to human readable format
+    let timeField = $(".datatag-key:contains('time_requested')").parent().children(".datatag-value");
+    timeField.text(new Date(parseInt(timeField.text())*1000).toString())
 }
 
 function googleMapsSrc(longitude, latitude) {

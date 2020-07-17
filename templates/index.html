@@ -9,6 +9,8 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="/static/index.css">
+    <script src="/static/jquery-3.5.1.min.js"></script>
+    <script src="/static/index.js"></script>
 
 </head>
 <body>
@@ -17,7 +19,7 @@
 <header class="w3-container w3-red w3-center" style="padding:128px 16px">
     <h1 class="w3-margin w3-jumbo">Image analytics</h1>
     <p class="w3-xlarge">Get analytics on a page simply by embedding an invisible image</p>
-    <button onclick="create_popup();" class="w3-button w3-black w3-padding-large w3-large w3-margin-top">Create tracking image</button>
+    <button onclick="createTrackingPopup();" class="w3-button w3-black w3-padding-large w3-large w3-margin-top">Create tracking image</button>
 </header>
 
 <!-- First Grid -->
@@ -25,17 +27,17 @@
     <div class="w3-content">
         <div class="w3-twothird">
             <h1>Where can I use this?</h1>
-            <h5 class="w3-padding-32">Anywhere you can embed an image! This could be anything from a form post to a
-            github profile. You can get data on the approximate amount of unique viewers, the total amount of hits,
-            the approximate location of visitors, and even the flow users take between pages if you are able to embed
-            on multiple linked pages (useful for something like viewing which repos people view from your profile on
-            github)</h5>
+            <h5 class="w3-padding-32">
+                Anywhere you can embed an image! This could be anything from a form post to a
+                github profile. You can get data on the approximate amount of unique viewers, the total amount of hits,
+                and the approximate location of visitors.
+            </h5>
         </div>
 
         <div class="w3-third w3-center">
             <!-- replace with representation of data visual -->
             <!-- maybe a fake visual such as a pie chart or graph -->
-            <i class="fa fa-anchor w3-padding-64 w3-text-red"></i>
+            <img src="/static/media/pie-chart.svg" alt="pie chart icon" width="350" height="350" class="fa w3-padding-64 w3-text-red w3-margin-right">
         </div>
     </div>
 </div>
@@ -44,8 +46,7 @@
 <div class="w3-row-padding w3-light-grey w3-padding-64 w3-container">
     <div class="w3-content">
         <div class="w3-third w3-center">
-            <!-- replace with gears symbol -->
-            <i class="fa fa-coffee w3-padding-64 w3-text-red w3-margin-right"></i>
+            <img src="/static/media/gears.svg" alt="gears icon" width="350" height="350" class="fa w3-padding-64 w3-text-red w3-margin-right">
         </div>
 
         <div class="w3-twothird">
@@ -54,29 +55,31 @@
             In this case, it's making a request to our server for the image. When we get an image request we are able
             to log the requesting ip address in order to distinguish between users and get an approximate location on
             where the request is coming from. We then send the site back a 1x1 transparent image so that the tracker
-            image is an invisible as possible.</h5>
+            image is as invisible as possible.</h5>
 
             <p class="w3-text-grey">The ip address of any users will never be visible to you, we do this in order to
                 help protect user privacy</p>
         </div>
     </div>
 </div>
-<div id="popup" class="w3-light-grey w3-padding-64 w3-round-xlarge">
-    <h5 class="w3-padding-32" style="text-align: center;">Your tracked image link</h5>
-    <div class="copy-container">
-        <input type="text" value="Loading..." id="embed-link" class="copy_input" disabled>
-        <button class="copy_button" id="embed-copy" onclick="copy_text('embed-link')" disabled>
-            <svg class="icon" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" width="24" height="24" viewBox="0 0 24 24"><path d="M17,9H7V7H17M17,13H7V11H17M14,17H7V15H14M12,3A1,1 0 0,1 13,4A1,1 0 0,1 12,5A1,1 0 0,1 11,4A1,1 0 0,1 12,3M19,3H14.82C14.4,1.84 13.3,1 12,1C10.7,1 9.6,1.84 9.18,3H5A2,2 0 0,0 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V5A2,2 0 0,0 19,3Z"></path></svg>
-        </button>
+<div id="popup" class="popup">
+    <div class="popup-center-container">
+        <h5 class="w3-padding-32" style="text-align: center;">Your tracked image link</h5>
+        <div class="copy-container">
+            <input type="text" value="Loading..." id="embed-link" class="copy_input" style="width: 25%" disabled>
+            <button class="copy_button" id="embed-copy" onclick="copy_text('embed-link')" disabled>
+                <svg class="icon" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" width="24" height="24" viewBox="0 0 24 24"><path d="M17,9H7V7H17M17,13H7V11H17M14,17H7V15H14M12,3A1,1 0 0,1 13,4A1,1 0 0,1 12,5A1,1 0 0,1 11,4A1,1 0 0,1 12,3M19,3H14.82C14.4,1.84 13.3,1 12,1C10.7,1 9.6,1.84 9.18,3H5A2,2 0 0,0 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V5A2,2 0 0,0 19,3Z"></path></svg>
+            </button>
+        </div>
+        <h5 class="w3-padding-32" style="text-align: center;">Your analytics view link</h5>
+        <div class="copy-container">
+            <input type="text" value="Loading..." id="stats-link" class="copy_input" style="width: 25%" disabled>
+            <button class="copy_button" id="stats-copy" onclick="copy_text('stats-link')" disabled>
+                <svg class="icon" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" width="24" height="24" viewBox="0 0 24 24"><path d="M17,9H7V7H17M17,13H7V11H17M14,17H7V15H14M12,3A1,1 0 0,1 13,4A1,1 0 0,1 12,5A1,1 0 0,1 11,4A1,1 0 0,1 12,3M19,3H14.82C14.4,1.84 13.3,1 12,1C10.7,1 9.6,1.84 9.18,3H5A2,2 0 0,0 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V5A2,2 0 0,0 19,3Z"></path></svg>
+            </button>
+        </div>
     </div>
-    <h5 class="w3-padding-32" style="text-align: center;">Your analytics view link</h5>
-    <div class="copy-container">
-        <input type="text" value="Loading..." id="stats-link" class="copy_input" disabled>
-        <button class="copy_button" id="stats-copy" onclick="copy_text('stats-link')" disabled>
-            <svg class="icon" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" width="24" height="24" viewBox="0 0 24 24"><path d="M17,9H7V7H17M17,13H7V11H17M14,17H7V15H14M12,3A1,1 0 0,1 13,4A1,1 0 0,1 12,5A1,1 0 0,1 11,4A1,1 0 0,1 12,3M19,3H14.82C14.4,1.84 13.3,1 12,1C10.7,1 9.6,1.84 9.18,3H5A2,2 0 0,0 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V5A2,2 0 0,0 19,3Z"></path></svg>
-        </button>
-    </div>
+    <span class="close">X</span>
 </div>
-<script src="/static/index.js"></script>
 </body>
 </html>

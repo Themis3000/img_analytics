@@ -1,28 +1,25 @@
-const popup_ele = document.getElementById("popup");
-const embed_input = document.getElementById("embed-link");
-const stats_input = document.getElementById("stats-link");
-const embed_button = document.getElementById("embed-copy");
-const stats_button = document.getElementById("stats-copy");
+$(function () {
+    $(".close").click(function() {
+        $(".popup").hide();
+        $(".blur-all").removeClass("blur-all");
+    });
+});
 
-function create_popup() {
-    popup_ele.style.display = "block";
-    embed_input.value = "Loading...";
-    stats_input.value = "Loading...";
-    embed_button.disabled = true;
-    stats_input.disabled = true;
-    let trackerRequest = new XMLHttpRequest();
-    trackerRequest.onreadystatechange = function () {
-        if (trackerRequest.readyState === 4 && trackerRequest.status === 200) {
-            let response = JSON.parse(trackerRequest.responseText);
-            let tracker_id = response["tracker_id"];
-                embed_input.value = `${window.location.origin}/img/${tracker_id}.jpeg`;
-                stats_input.value = `${window.location.origin}/img/${tracker_id}`;
-                embed_button.disabled = false;
-                stats_button.disabled = false;
-        }
-    }
-    trackerRequest.open("GET", "/api/create_tracker");
-    trackerRequest.send();
+function createTrackingPopup() {
+    $("body > *:not(#popup)").addClass("blur-all");
+    $("#popup").show();
+    $("#embed-link").text("Loading...");
+    $("#stats-link").text("Loading...");
+    $("#embed-copy").prop("disabled", true);
+    $("#stats-copy").prop("disabled", true);
+    $.get("/api/create_tracker", function (data, status) {
+        let response = JSON.parse(data);
+        let tracker_id = response["tracker_id"];
+        $("#embed-link").prop("value", `${window.location.origin}/img/${tracker_id}.jpeg`);
+        $("#stats-link").prop("value", `${window.location.origin}/img/${tracker_id}`);
+        $("#embed-copy").prop("disabled", false);
+        $("#stats-copy").prop("disabled", false);
+    })
 }
 
 function copy_text(input_id) {

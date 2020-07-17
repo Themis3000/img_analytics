@@ -40,7 +40,7 @@ def stats_page(tracker_id):
 @app.route('/api/create_tracker')
 def create_tracker():
     tracker_id = mongo.create_page_tracker()
-    return {"tracker_id": tracker_id}
+    return json.dumps({"tracker_id": tracker_id})
 
 
 @app.route('/api/tracker/<tracker_id>')

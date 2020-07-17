@@ -48,16 +48,47 @@ body, h1, h2, h3, h4, h5, h6 {
     white-space: nowrap;
 }
 
-#popup {
+body {
+    position: relative;
+}
+
+.blur-all {
+    -webkit-filter: blur(5px);
+    -moz-filter: blur(5px);
+    -o-filter: blur(5px);
+    -ms-filter: blur(5px);
+    filter: blur(5px);
+}
+
+.close {
+  cursor: pointer;
+  position: absolute;
+  top: 0;
+  right: 0;
+  padding: 12px 16px;
+  border-radius: 1px;
+}
+
+.close:hover {background: #9a9a9a;}
+
+.popup {
     display: none;
     position: fixed;
-    max-width: 800px;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    width: 50%;
+    width: 85%;
+    height: 85%;
+    background-color: #ffffff;
+    border-radius: 5px;
+    border: thin solid #292929;
 }
 
-body {
-    position: relative;
+.popup-center-container {
+    margin: 0;
+    position: absolute;
+    top:50%;
+    width: 100%;
+    -ms-transform: translateY(-50%);
+    transform: translateY(-50%);
 }
