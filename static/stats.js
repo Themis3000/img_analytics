@@ -3,8 +3,8 @@ const trackingCode = url.split("/").pop();
 var trackingData;
 
 
-$(function() {
-    $.get("/api/tracker/" + trackingCode, function(data, status) {
+$(function () {
+    $.get("/api/tracker/" + trackingCode, function (data, status) {
         trackingData = JSON.parse(data);
 
         //set upper 3 quick stats elements
@@ -22,7 +22,7 @@ $(function() {
         for (let [index, visit] of trackingData["visits"].entries()) {
             let visitLocation;
             if (visit["city"].length === 0) {
-                if (visit["country_name"].length === 0){
+                if (visit["country_name"].length === 0) {
                     visitLocation = "(unknown)"
                 } else {
                     visitLocation = visit["country_name"]
@@ -33,7 +33,7 @@ $(function() {
             $("#recent-visits tbody").append(`
                 <tr>
                     <td>${visitLocation}</td>
-                    <td>${timeSince(new Date(visit["time_requested"]*1000))}</td>
+                    <td>${timeSince(new Date(visit["time_requested"] * 1000))}</td>
                     <td><div class="w3-btn green-button" onclick="visitMoreInfo(${index});">More info</div></td>            
                 </tr>
             `)
@@ -44,10 +44,12 @@ $(function() {
             map: 'world_mill_en',
             series: {
                 regions: [{
-                values: filterDataForMap(trackingData["visit_counts"]["country_code"], 'world_mill_en'),
-                scale: ['#C8EEFF', '#0071A4'],
-                normalizeFunction: 'polynomial'}]},
-            onRegionTipShow: function(e, el, code) {
+                    values: filterDataForMap(trackingData["visit_counts"]["country_code"], 'world_mill_en'),
+                    scale: ['#C8EEFF', '#0071A4'],
+                    normalizeFunction: 'polynomial'
+                }]
+            },
+            onRegionTipShow: function (e, el, code) {
                 let views = trackingData["visit_counts"]["country_code"][code];
                 if (views === undefined) {
                     views = 0;
@@ -55,8 +57,38 @@ $(function() {
                 el.html(`${el.html()} (${views} views)`);
             }
         });
+
+        //pie chart options
+        let options = {
+            legend: false,
+            tooltips: {
+                callbacks: {
+                    label: function (tooltipItem, data) {
+                        let dataset = data.datasets[tooltipItem.datasetIndex];
+                        let meta = dataset._meta[Object.keys(dataset._meta)[0]];
+                        let total = meta.total;
+                        let currentValue = dataset.data[tooltipItem.index];
+                        let percentage = parseFloat((currentValue / total * 100).toFixed(1));
+                        return currentValue + ' (' + percentage + '%)';
+                    },
+                    title: function (tooltipItem, data) {
+                        return data.labels[tooltipItem[0].index];
+                    }
+                }
+            }
+        }
+        let refPieData = {datasets: [{data: [], backgroundColor: randomColor}], labels: []};
+        $.each(trackingData["visit_counts"]["referer"], function (key, value) {
+            refPieData["labels"].push(key);
+            refPieData["datasets"][0]["data"].push(value);
+        });
+        new Chart($("#country-pie"), {
+            type: 'pie',
+            data: refPieData,
+            options: options
+        });
     });
-    $(".close").click(function() {
+    $(".close").click(function () {
         $(".popup").hide();
         $(".blur-all").removeClass("blur-all");
     });
@@ -67,7 +99,7 @@ function visitMoreInfo(visitIndex) {
     $("#visit-more-info").show();
     $("#google-map").prop('src', googleMapsSrc(trackingData["visits"][visitIndex]["longitude"], trackingData["visits"][visitIndex]["latitude"]));
     $("#view-more-info tbody").empty();
-    $.each(trackingData["visits"][visitIndex], function(key, value) {
+    $.each(trackingData["visits"][visitIndex], function (key, value) {
         if (value.length !== 0) {
             $("#view-more-info tbody").append(`
                 <tr>
@@ -79,32 +111,32 @@ function visitMoreInfo(visitIndex) {
     });
     //converts epoch time in time_requested field to human readable format
     let timeField = $(".datatag-key:contains('time_requested')").parent().children(".datatag-value");
-    timeField.text(new Date(parseInt(timeField.text())*1000).toString())
+    timeField.text(new Date(parseInt(timeField.text()) * 1000).toString())
 }
 
 function googleMapsSrc(longitude, latitude) {
     return `https://maps.google.com/maps?q=${longitude}, ${latitude}&z=2&output=embed`
 }
 
-function filterDataForMap(data, mapName){
+function filterDataForMap(data, mapName) {
     let filteredData = {};
-    $.each(data,function(key, value){
-       //Only add when the key (country code) exists in the map
-       if(jvm.Map.maps[mapName].paths[key]!==undefined) {
-          filteredData[key] = value;
-       }
+    $.each(data, function (key, value) {
+        //Only add when the key (country code) exists in the map
+        if (jvm.Map.maps[mapName].paths[key] !== undefined) {
+            filteredData[key] = value;
+        }
     });
     return filteredData;
 }
 
-function roundedToFixed(_float, _digits){
-  let rounded = Math.pow(10, _digits);
-  return (Math.round(_float * rounded) / rounded).toFixed(_digits);
+function roundedToFixed(_float, _digits) {
+    let rounded = Math.pow(10, _digits);
+    return (Math.round(_float * rounded) / rounded).toFixed(_digits);
 }
 
 function timeSince(timeStamp) {
     var now = new Date(),
-    secondsPast = (now.getTime() - timeStamp) / 1000;
+        secondsPast = (now.getTime() - timeStamp) / 1000;
     if (secondsPast < 60) {
         return parseInt(secondsPast) + 's';
     }
@@ -120,4 +152,12 @@ function timeSince(timeStamp) {
         year = timeStamp.getFullYear() == now.getFullYear() ? "" : " " + timeStamp.getFullYear();
         return day + " " + month + year;
     }
+}
+
+function randomColor() {
+    var r = Math.floor(Math.random() * 255);
+    var g = Math.floor(Math.random() * 255);
+    var b = Math.floor(Math.random() * 255);
+    return "rgb(" + r + "," + g + "," + b + "," + .6 + ")";
+
 }
