@@ -4,3 +4,4 @@ pymongo
 cachetools
 shortuuid
 retrying
+gunicorn
