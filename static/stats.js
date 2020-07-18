@@ -98,7 +98,7 @@ $(function () {
 function visitMoreInfo(visitIndex) {
     $("#main-content").addClass("blur-all");
     $("#visit-more-info").show();
-    $("#google-map").prop('src', googleMapsSrc(trackingData["visits"][visitIndex]["longitude"], trackingData["visits"][visitIndex]["latitude"]));
+    $("#google-map").prop('src', googleMapsSrc(trackingData["visits"][visitIndex]["latitude"], trackingData["visits"][visitIndex]["longitude"]));
     $("#view-more-info tbody").empty();
     $.each(trackingData["visits"][visitIndex], function (key, value) {
         if (value.length !== 0) {
@@ -141,8 +141,8 @@ function addVisits(visits, append) {
     });
 }
 
-function googleMapsSrc(longitude, latitude) {
-    return `https://maps.google.com/maps?q=${longitude}, ${latitude}&z=2&output=embed`
+function googleMapsSrc(latitude, longitude) {
+    return `https://maps.google.com/maps?q=${latitude}, ${longitude}&z=2&output=embed`
 }
 
 function filterDataForMap(data, mapName) {
