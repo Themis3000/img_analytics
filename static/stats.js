@@ -134,7 +134,7 @@ function addVisits(visits, append) {
         $("#recent-visits tbody").append(`
                 <tr>
                     <td>${visitLocation}</td>
-                    <td>${visit["country_code"]}</td>
+                    <td>${timeSince(new Date(visit["time_requested"] * 1000))}</td>
                     <td><div class="w3-btn green-button" onclick="visitMoreInfo(${index});">More info</div></td>            
                 </tr>
             `);
