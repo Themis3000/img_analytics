@@ -68,11 +68,17 @@ def add_page_view(view_data):
                              "$inc": inc_values})
 
 
-def get_views(tracker_id, visits_amount=30, mask_ips=True):
-    views_data = trackers_col.find_one({"tracker_id": tracker_id},
-                                       {"visits": {"$slice": visits_amount*-1},
-                                       "visit_counts.users": False,
-                                        "_id": False})
+def get_tracker_data(tracker_id, visits_amount=30, mask_ips=True):
+    views_aggregate = trackers_col.aggregate([
+        {"$match": {"tracker_id": tracker_id}},
+        {"$project": {"visits": True, "visit_counts.referer": True, "visit_counts.country_code": True, "_id": False,
+                      "visit_counts.all": True, "visit_counts.unique": True, "created_time": True}},
+        {"$set": {
+            "visits_size": {"$size": "$visits"},
+            "visits": {"$slice": ["$visits", visits_amount * -1]}
+        }}
+    ])
+    views_data = dict(next(views_aggregate))
     if mask_ips:
         for index, view_data in enumerate(views_data["visits"]):
             del view_data["ip"]
@@ -81,5 +87,16 @@ def get_views(tracker_id, visits_amount=30, mask_ips=True):
     return views_data
 
 
-def create_page_group():
-    pass
+def get_views_data(tracker_id, start, amount, mask_ips=True):
+    data = trackers_col.aggregate([
+        {"$match": {"tracker_id": tracker_id}},
+        {"$project": {"visits": True, "_id": False}},
+        {"$set": {"visits": {"$slice": ["$visits", start, amount]}}}
+    ])
+    views_data = list(next(data)["visits"])
+    if mask_ips:
+        for index, view_data in enumerate(views_data):
+            del view_data["ip"]
+            views_data[index] = view_data
+    views_data.reverse()
+    return views_data

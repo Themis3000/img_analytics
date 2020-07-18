@@ -6,6 +6,7 @@ var trackingData;
 $(function () {
     $.get("/api/tracker/" + trackingCode, function (data, status) {
         trackingData = JSON.parse(data);
+        console.log(trackingData);
 
         //set upper 3 quick stats elements
         let currentEpochSeconds = Date.now() / 1000;
@@ -19,25 +20,25 @@ $(function () {
         $("#unique-views").text(trackingData["visit_counts"]["unique"]);
 
         //populate recent view table
-        for (let [index, visit] of trackingData["visits"].entries()) {
-            let visitLocation;
-            if (visit["city"].length === 0) {
-                if (visit["country_name"].length === 0) {
-                    visitLocation = "(unknown)"
-                } else {
-                    visitLocation = visit["country_name"]
+        addVisits(trackingData["visits"], false);
+        //add event handler for when scroll reached bottom
+        $('#recent-visits-container').on("scroll", function() {
+            if ($(this).scrollTop() + $(this).innerHeight() >= $(this)[0].scrollHeight) {
+                let amount = 20;
+                let start = trackingData["visits_size"] - trackingData["visits"].length - amount;
+                if (0 > start) {
+                    amount = start + amount;
+                    start = 0;
+                    $(this).off("scroll");
                 }
-            } else {
-                visitLocation = `${visit["city"]}, ${visit["country_name"]}`
+                $.get(`/api/get_views/${trackingCode}?start=${start}&amount=${amount}`, function (data, status) {
+                    let viewsData = JSON.parse(data);
+                    console.log(viewsData);
+                    addVisits(viewsData["views"], true);
+                });
             }
-            $("#recent-visits tbody").append(`
-                <tr>
-                    <td>${visitLocation}</td>
-                    <td>${timeSince(new Date(visit["time_requested"] * 1000))}</td>
-                    <td><div class="w3-btn green-button" onclick="visitMoreInfo(${index});">More info</div></td>            
-                </tr>
-            `)
-        }
+        });
+
 
         //create map
         $('#world-map').vectorMap({
@@ -112,6 +113,32 @@ function visitMoreInfo(visitIndex) {
     //converts epoch time in time_requested field to human readable format
     let timeField = $(".datatag-key:contains('time_requested')").parent().children(".datatag-value");
     timeField.text(new Date(parseInt(timeField.text()) * 1000).toString())
+}
+
+function addVisits(visits, append) {
+    let indexMod = trackingData["visits"].length;
+    if (append) {
+        trackingData["visits"].push(...visits);
+    }
+    $.each(visits, function (index, visit) {
+        let visitLocation;
+        if (visit["city"].length === 0) {
+            if (visit["country_name"].length === 0) {
+                visitLocation = "(unknown)";
+            } else {
+                visitLocation = visit["country_name"];
+            }
+        } else {
+            visitLocation = `${visit["city"]}, ${visit["country_name"]}`;
+        }
+        $("#recent-visits tbody").append(`
+                <tr>
+                    <td>${visitLocation}</td>
+                    <td>${visit["country_code"]}</td>
+                    <td><div class="w3-btn green-button" onclick="visitMoreInfo(${index+indexMod});">More info</div></td>            
+                </tr>
+            `);
+    });
 }
 
 function googleMapsSrc(longitude, latitude) {
