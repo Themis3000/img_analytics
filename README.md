@@ -4,6 +4,7 @@
 Live on site https://imgtraker.herokuapp.com/
 
 Statistics panel for this page: https://imgtraker.herokuapp.com/stats/BzgJPaac
+(somewhat dodgey on github sense github makes the request and passes it through to the browser)
 
 ### Where can I use this?
 Anywhere you can embed an image! This could be anything from a form post to a github profile. You can get data on the
