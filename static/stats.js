@@ -116,11 +116,11 @@ function visitMoreInfo(visitIndex) {
 }
 
 function addVisits(visits, append) {
-    let indexMod = trackingData["visits"].length;
-    if (append) {
-        trackingData["visits"].push(...visits);
-    }
     $.each(visits, function (index, visit) {
+        if (append) {
+            trackingData["visits"].push(visit);
+            index = trackingData["visits"].length - 1;
+        }
         let visitLocation;
         if (visit["city"].length === 0) {
             if (visit["country_name"].length === 0) {
@@ -135,7 +135,7 @@ function addVisits(visits, append) {
                 <tr>
                     <td>${visitLocation}</td>
                     <td>${visit["country_code"]}</td>
-                    <td><div class="w3-btn green-button" onclick="visitMoreInfo(${index+indexMod});">More info</div></td>            
+                    <td><div class="w3-btn green-button" onclick="visitMoreInfo(${index});">More info</div></td>            
                 </tr>
             `);
     });

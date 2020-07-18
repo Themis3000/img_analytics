@@ -45,7 +45,7 @@ def create_tracker():
 
 @app.route('/api/tracker/<tracker_id>')
 def get_tracker(tracker_id):
-    data = json.dumps(dict(mongo.get_tracker_data(tracker_id, 30, mask_ips=True)))
+    data = json.dumps(dict(mongo.get_tracker_data(tracker_id, 25, mask_ips=True)))
     return data
 
 
