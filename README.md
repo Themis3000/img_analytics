@@ -1,7 +1,7 @@
 # Image analytics
-*Get analytics on any page you can embed an image*
+*Get simple analytics on any page you can embed an image*
 
-(not yet hosted, still under development)
+Live on site https://imgtraker.herokuapp.com/
 
 ### Where can I use this?
 Anywhere you can embed an image! This could be anything from a form post to a github profile. You can get data on the
