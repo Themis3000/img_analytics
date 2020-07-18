@@ -5,3 +5,4 @@ cachetools
 shortuuid
 retrying
 gunicorn
+dnspython
