@@ -6,3 +6,4 @@ shortuuid
 retrying
 gunicorn
 dnspython
+werkzeug
