@@ -21,7 +21,7 @@ def img_request(tracker_id):
     response.headers["Cache-Control"] = "max-age=0, no-cache, no-store, must-retaliate"
     # request.environ.get is meant to help in thee situation of a proxy being used, may not always work in all
     # environments. See https://stackoverflow.com/a/26654607/5813879
-    request_ip = request.remote_addr
+    request_ip = request.headers["X-Forwarded-For"] if "X-Forwarded-For" in request.headers else request.remote_addr
     referer = request.headers["Referer"] if "Referer" in request.headers else None
     visit_recorder.add_visit(request_ip, tracker_id, referer)
     return response
