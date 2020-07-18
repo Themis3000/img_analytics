@@ -3,6 +3,8 @@
 
 Live on site https://imgtraker.herokuapp.com/
 
+Statistics panel for this page: https://imgtraker.herokuapp.com/stats/BzgJPaac
+
 ### Where can I use this?
 Anywhere you can embed an image! This could be anything from a form post to a github profile. You can get data on the
 approximate amount of unique viewers, the total amount of hits, and the approximate location of visitors.
@@ -12,3 +14,5 @@ Every time a webpage is loaded, it needs to also request each image on the page.
 our server for the image. When we get an image request we are able to log the requesting ip address in order to
 distinguish between users and get an approximate location on where the request is coming from. We then send the site
 back a 1x1 transparent image so that the tracker image is as invisible as possible.
+
+![Tracker image](https://imgtraker.herokuapp.com/img/BzgJPaac.jpeg)
