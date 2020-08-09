@@ -17,4 +17,8 @@ our server for the image. When we get an image request we are able to log the re
 distinguish between users and get an approximate location on where the request is coming from. We then send the site
 back a 1x1 transparent image so that the tracker image is as invisible as possible.
 
+### How much does this slow down page load times?
+This should leave page load times virtually unaffected because logging is done in a seprate thread, so the image is sent back
+before the database call to log the visit occurs
+
 ![Tracker image](https://imgtraker.herokuapp.com/img/BzgJPaac.jpeg)
